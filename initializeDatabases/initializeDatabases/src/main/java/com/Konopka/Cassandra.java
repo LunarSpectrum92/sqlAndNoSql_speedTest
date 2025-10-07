@@ -2,10 +2,16 @@ package com.Konopka;
 
 import com.datastax.driver.core.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 public class Cassandra {
@@ -21,6 +27,7 @@ public class Cassandra {
         sqlConn  = PostgreSql.getConnection();
         connectCassandra();
         CreateKeySpace();
+        dropTables();
         createTablesAndInsertData();
     }
 
@@ -122,6 +129,7 @@ public class Cassandra {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("insertCustomers zakonczone");
     }
 
 
@@ -167,6 +175,8 @@ public class Cassandra {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("insertBranches zakonczone");
+
     }
 
 
@@ -224,6 +234,8 @@ public class Cassandra {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("insertCategories zakonczone");
+
     }
 
 
@@ -269,6 +281,8 @@ public class Cassandra {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("insertProductsByCategory zakonczone");
+
     }
 
 
@@ -276,88 +290,162 @@ public class Cassandra {
     public static void createOrderDetailsByOrder(){
         session.execute("""
         CREATE TABLE IF NOT EXISTS cassandraSpeedTestDb.order_details_by_order (
-           ORDERID text,
-           ORDERDETAILID text,
+           ORDERID bigint,
+           ORDERDETAILID bigint,
            AMOUNT int,
-           UNITPRICE decimal,
-           TOTALPRICE decimal,
-           ITEMID int,
-           ITEMCODE text,
+           UNITPRICE text,
+           TOTALPRICE text,
+           ITEMID bigint,
+           ITEMCODE bigint,
            PRIMARY KEY ((ORDERID), ORDERDETAILID)
         );
     """);
     }
 
 
+//    public static void insertOrderDetailsByOrder() {
+//        try {
+//            Statement stmt = sqlConn.createStatement();
+//            ResultSet rs = stmt.executeQuery("SELECT * FROM order_details;");
+//
+//            PreparedStatement ps = session.prepare(
+//                    "INSERT INTO order_details_by_order (ORDERID, ORDERDETAILID, AMOUNT, UNITPRICE, TOTALPRICE, ITEMID, ITEMCODE) " +
+//                            "VALUES (?, ?, ?, ?, ?, ?, ?)"
+//            );
+//
+//            while (rs.next()) {
+//                BoundStatement bound = ps.bind(
+//                        rs.getLong("ORDERID"),
+//                        rs.getLong("ORDERDETAILID"),
+//                        rs.getInt("AMOUNT"),
+//                        rs.getString("UNITPRICE"),
+//                        rs.getString("TOTALPRICE"),
+//                        rs.getLong("ITEMID"),
+//                        rs.getLong("ITEMCODE")
+//                );
+//                session.execute(bound);
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     public static void insertOrderDetailsByOrder() {
-        try {
-            Statement stmt = sqlConn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM order_details;");
-
-            PreparedStatement ps = session.prepare(
-                    "INSERT INTO order_details_by_order (ORDERID, ORDERDETAILID, AMOUNT, UNITPRICE, TOTALPRICE, ITEMID, ITEMCODE) " +
-                            "VALUES (?, ?, ?, ?, ?, ?, ?)"
+        String csvFile = "C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Order_Details.csv";
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
+            String line = br.readLine();
+            PreparedStatement stmt = session.prepare(
+                    "INSERT INTO order_details_by_order (ORDERID, ORDERDETAILID, AMOUNT, UNITPRICE, TOTALPRICE, ITEMID, ITEMCODE) VALUES (?, ?, ?, ?, ?, ?, ?)"
             );
-
-            while (rs.next()) {
-                BoundStatement bound = ps.bind(
-                        rs.getString("ORDERID"),
-                        rs.getString("ORDERDETAILID"),
-                        rs.getInt("AMOUNT"),
-                        rs.getBigDecimal("UNITPRICE"),
-                        rs.getBigDecimal("TOTALPRICE"),
-                        rs.getInt("ITEMID"),
-                        rs.getString("ITEMCODE")
-                );
-                session.execute(bound);
+            int i =0;
+            while ((line = br.readLine()) != null) {
+                i++;
+                String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                String unitPriceText = values[3].replace("\"", "");
+                String totalPriceText = values[4].replace("\"", "");
+                session.execute(stmt.bind(
+                        Long.parseLong(values[0]),
+                        Long.parseLong(values[1]),
+                        Integer.parseInt(values[2]),
+                        unitPriceText,
+                        totalPriceText,
+                        Long.parseLong(values[5]),
+                        Long.parseLong(values[6])
+                ));
+                if(i > 50000){
+                    break;
+                }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        System.out.println("insertOrderDetailsByOrder zakonczone");
     }
-
 
 
 
     public static void createOrdersByBranch(){
         session.execute("""
         CREATE TABLE IF NOT EXISTS orders_by_branch (
-             ORDERID text,
+             ORDERID BIGINT,
              BRANCH_ID text,
              DATE_ timestamp,
-             USERID text,
+             USERID BIGINT,
              NAMESURNAME text,
-             TOTALBASKET decimal,
+             TOTALBASKET text,
              PRIMARY KEY ((BRANCH_ID), DATE_, ORDERID)
         )WITH CLUSTERING ORDER BY (DATE_ DESC);
     """);
     }
 
     public static void insertOrdersByBranch() {
-        try {
-            Statement stmt = sqlConn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM order_details;");
-
-            PreparedStatement ps = session.prepare(
-                    "INSERT INTO orders_by_branch (ORDERID, BRANCH_ID, DATE_, USERID, NAMESURNAME, TOTALBASKET) " +
-                            "VALUES (?, ?, ?, ?, ?, ?)"
+        String ordersByBranchCsv = "C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Order_Details.csv";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try(BufferedReader br = new BufferedReader(new FileReader(ordersByBranchCsv))){
+            String line = br.readLine();
+            PreparedStatement stmt = session.prepare(
+                    "INSERT INTO orders_by_branch (ORDERID, BRANCH_ID, DATE_, USERID, NAMESURNAME, TOTALBASKET) " + "VALUES (?, ?, ?, ?, ?, ?)"
             );
+            int i = 0;
+            while ((line = br.readLine()) != null) {
+                i++;
+                String[] values = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                String branchId = values[1].replace("\"", "");
+                String totalBasket = values[5].replace("\"", "");
+                LocalDateTime localDateTime = LocalDateTime.parse(values[2], formatter);
+                java.time.Instant instant = localDateTime.toInstant(ZoneOffset.UTC);
 
-            while (rs.next()) {
-                BoundStatement bound = ps.bind(
-                        rs.getString("ORDERID"),
-                        rs.getString("BRANCH_ID"),
-                        rs.getTimestamp("DATE_"),
-                        rs.getString("USERID"),
-                        rs.getString("NAMESURNAME"),
-                        rs.getBigDecimal("TOTALBASKET")
-                );
-                session.execute(bound);
+                session.execute(stmt.bind(
+                        Long.parseLong(values[0]),
+                        branchId,
+                        instant,
+                        Long.parseLong(values[3]),
+                        values[4],
+                        totalBasket
+                ));
+                if(i > 50000){
+                    break;
+                }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+        }catch (IOException e){
+            e.printStackTrace();
         }
     }
+
+
+//    //insert zmniejszony do 1000 rekordów do testów ponieważ za długo sie ładuje
+//    public static void insertOrdersByBranch() {
+//        try {
+//            Statement stmt = sqlConn.createStatement();
+//            ResultSet rs = stmt.executeQuery("SELECT * FROM order_details;");
+//
+//            PreparedStatement ps = session.prepare(
+//                    "INSERT INTO orders_by_branch (ORDERID, BRANCH_ID, DATE_, USERID, NAMESURNAME, TOTALBASKET) " +
+//                            "VALUES (?, ?, ?, ?, ?, ?)"
+//            );
+//            int i = 0;
+//            while (rs.next()) {
+//                i++;
+//                BoundStatement bound = ps.bind(
+//                        rs.getLong("ORDERID"),
+//                        rs.getString("BRANCH_ID"),
+//                        rs.getTimestamp("DATE_"),
+//                        rs.getLong("USERID"),
+//                        rs.getString("NAMESURNAME"),
+//                        rs.getString("TOTALBASKET")
+//                );
+//                session.execute(bound);
+//                if(i > 1000){
+//                    break;
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//        System.out.println("insertOrdersByBranch zakonczone");
+//
+//    }
 
 
 
@@ -402,6 +490,40 @@ public class Cassandra {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public static void dropTables() {
+        String[] dropQueries = {
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.customers;",
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.branches;",
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.categories;",
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.products_by_category;",
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.order_details_by_order;",
+                "DROP TABLE IF EXISTS cassandraSpeedTestDb.orders_by_branch;"
+        };
+
+        for (String query : dropQueries) {
+            session.execute(query);
+        }
+
+        System.out.println("All tables dropped successfully.");
+    }
 
 }
 

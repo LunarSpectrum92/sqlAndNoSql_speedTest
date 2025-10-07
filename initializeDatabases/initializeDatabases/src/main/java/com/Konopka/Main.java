@@ -11,7 +11,7 @@ public class    Main {
     public static void main(String[] args) {
         boolean stop = true;
         while(stop){
-            System.out.println("1: zainicjalizuj bazeSql\n" + "2: zainicjalizuj bazeNoSql\n" + "3: zamknij program\n" + "wybierz opcje:");
+            System.out.println("1: zainicjalizuj bazeSql\n" + "2: zainicjalizuj bazeNoSql (żeby być w stanie zainicjalizować cassandre wykonaj najpierw krok 1)\n" + "3: zamknij program\n" + "wybierz opcje:");
             Scanner sc = new Scanner(System.in);
             int choice = sc.nextInt();
             switch (choice){
