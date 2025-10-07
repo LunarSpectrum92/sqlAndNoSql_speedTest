@@ -14,14 +14,17 @@ public class PostgreSql {
     private static PostgreSql instance;
     private static Connection conn;
 
-    private PostgreSql() {
-        getConnection();
-        dropTables();
-        Branches();
-        Categories_ENG();
-        Customers_ENG();
-        Orders();
-        Order_Details();
+    private PostgreSql(int x) {
+        if(x == 2){
+            getConnection();
+        }else{
+            dropTables();
+            Branches();
+            Categories_ENG();
+            Customers_ENG();
+            Orders();
+            Order_Details();
+        }
     }
 
     public static Connection getConnection() {
@@ -37,9 +40,9 @@ public class PostgreSql {
     }
 
 
-    public static PostgreSql getInstance() {
+    public static PostgreSql getInstance(int x) {
         if (instance == null) {
-            instance = new PostgreSql();
+            instance = new PostgreSql(x);
             System.out.println("instancja wywolana");
         }
         return instance;

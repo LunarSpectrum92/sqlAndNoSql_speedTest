@@ -1,12 +1,8 @@
 package com.Konopka;
 
 
-import org.postgresql.copy.CopyManager;
-import org.postgresql.core.BaseConnection;
 
 import java.io.*;
-import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -21,9 +17,11 @@ public class    Main {
             switch (choice){
                 case 1:
                     deleteBranches_EngDuplicates();
-                    PostgreSql.getInstance();
+                    PostgreSql.getInstance(1);
                     break;
                 case 2:
+                    PostgreSql.getInstance(2);
+                    Cassandra.getInstance();
                     break;
                 case 3:
                     stop = false;
