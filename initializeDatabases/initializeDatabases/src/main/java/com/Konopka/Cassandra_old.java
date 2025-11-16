@@ -2,30 +2,21 @@ package com.Konopka;
 
 import com.datastax.driver.core.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class Cassandra {
+public class Cassandra_old {
 
-    private static Cassandra instance;
+    private static Cassandra_old instance;
     private static Connection sqlConn;
     private static Cluster cluster;
     private static Session session;
 
-
-
-    private Cassandra(){
+    private Cassandra_old(){
         sqlConn  = PostgreSql.getConnection();
         connectCassandra();
         CreateKeySpace();
@@ -36,16 +27,16 @@ public class Cassandra {
     private static void connectCassandra(){
         cluster = Cluster.builder()
                 .addContactPoint("localhost")
-                .withPort(9042)
+                .withPort(9043)
                 .build();
         session = cluster.connect("cassandraSpeedTestDb");
         System.out.println("Połączono z Cassandra!");
     }
 
 
-    public static Cassandra getInstance(){
+    public static Cassandra_old getInstance(){
         if(instance == null){
-            instance = new Cassandra();
+            instance = new Cassandra_old();
         }
         return instance;
     }
@@ -372,8 +363,8 @@ public class Cassandra {
 
 
 
-        public static void createOrdersByBranch(){
-            session.execute("""
+    public static void createOrdersByBranch(){
+        session.execute("""
             CREATE TABLE IF NOT EXISTS orders_by_branch (
                  ORDERID BIGINT,
                  BRANCH_ID text,
@@ -384,7 +375,7 @@ public class Cassandra {
                  PRIMARY KEY ((BRANCH_ID), DATE_, ORDERID)
             )WITH CLUSTERING ORDER BY (DATE_ DESC);
         """);
-        }
+    }
 
 //    public static void insertOrdersByBranch() {
 //        String ordersByBranchCsv = "C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Order_Details.csv";
@@ -494,6 +485,7 @@ public class Cassandra {
         try {
 
 
+            // --- 3. Pobranie zamówień z SQL ---
             Statement stmt = sqlConn.createStatement();
             ResultSet rs = stmt.executeQuery("""
             SELECT c.USERID, o.DATE_, o.ORDERID, b.BRANCH_ID, o.TOTALBASKET, c.NAMESURNAME
@@ -518,6 +510,7 @@ public class Cassandra {
             while (rs.next()) {
                 long orderId = rs.getLong("ORDERID");
 
+                // --- 5. Pobranie szczegółów zamówienia ---
                 java.sql.PreparedStatement detailStmt = sqlConn.prepareStatement("""
                 SELECT d.orderdetailid, d.itemid, c.itemcode, c.itemname, d.amount, d.unitprice, d.totalprice
                 FROM order_details d
@@ -527,6 +520,7 @@ public class Cassandra {
                 detailStmt.setLong(1, orderId);
                 ResultSet rsDetail = detailStmt.executeQuery();
 
+                // --- 6. Budowanie listy UDTValue ---
                 List<UDTValue> orderItems = new ArrayList<>();
                 while (rsDetail.next()) {
                     UDTValue item = itemType.newValue()
@@ -540,6 +534,7 @@ public class Cassandra {
                     orderItems.add(item);
                 }
 
+                // --- 7. Wstawienie do Cassandry ---
                 BoundStatement bound = ps.bind(
                         rs.getInt("USERID"),
                         rs.getTimestamp("DATE_"),
@@ -553,7 +548,7 @@ public class Cassandra {
                 session.execute(bound);
 
                 i++;
-                if (i > 10) break;
+                if (i > 10) break; // tylko 10 rekordów na próbę
             }
 
         } catch (SQLException e) {
@@ -591,8 +586,7 @@ public class Cassandra {
         System.out.println("All tables dropped successfully.");
     }
 
+
+
+
 }
-
-
-
-

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
@@ -13,6 +11,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./import:/tmp/import
     networks:
       - app_network
 
@@ -24,11 +23,50 @@ services:
       - CASSANDRA_USER=admin
       - CASSANDRA_PASSWORD=admin
     ports:
-      - "9042:9042"   # CQL port
+      - "9042:9042"
     volumes:
       - cassandra_data:/var/lib/cassandra
+      - ./import:/var/lib/cassandra-files
     networks:
       - app_network
+
+  cassandra1:
+    image: cassandra:3.11.19
+    container_name: cassandra-db-old
+    restart: always
+    environment:
+      - CASSANDRA_USER=admin
+      - CASSANDRA_PASSWORD=admin
+    ports:
+      - "9043:9042"
+    volumes:
+      - cassandra_data_old:/var/lib/cassandra
+      - ./import:/var/lib/cassandra-files
+    networks:
+      - app_network
+
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: SqlSpeedTest
+      MYSQL_ROOT_HOST: "%"
+    command: --local-infile=1
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./import:/var/lib/mysql-files
+    networks:
+      - app_network
+
+
+
+
+
 
 networks:
   app_network:
@@ -37,3 +75,5 @@ networks:
 volumes:
   postgres_data:
   cassandra_data:
+  cassandra_data_old:
+  mysql_data:

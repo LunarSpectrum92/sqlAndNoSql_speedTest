@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.Konopka</groupId>
-    <artifactId>initializeDatabases</artifactId>
+    <artifactId>testDatabasesSpeed</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -15,16 +15,13 @@
             <version>3.11.5</version>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.33</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.7</version>
         </dependency>
     </dependencies>
+
+
 
 
     <properties>

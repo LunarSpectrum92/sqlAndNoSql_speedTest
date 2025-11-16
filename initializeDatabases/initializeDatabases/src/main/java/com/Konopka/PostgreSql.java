@@ -18,11 +18,12 @@ public class PostgreSql {
         if(x == 2){
             getConnection();
         }else{
-            dropTables();
-            Branches();
-            Categories_ENG();
-            Customers_ENG();
-            Orders();
+            getConnection();
+            //dropTables();
+            //Branches();
+            //Categories_ENG();
+            //Customers_ENG();
+            //Orders();
             Order_Details();
         }
     }
@@ -74,26 +75,27 @@ public class PostgreSql {
 
         try {
             Statement stmt = conn.createStatement();
-
             int rs = stmt.executeUpdate(createTable);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-
-
-        try{
-            CopyManager copyManager = new CopyManager((BaseConnection) conn);
-
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Branches.csv"))) {
-                copyManager.copyIn("COPY Branches FROM STDIN WITH CSV HEADER DELIMITER ','", br);
-                System.out.println("Data has been copied from CSV to the table successfully.");
-            } catch (Exception e) {
-                System.out.println("Error reading CSV file: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection failure: " + e.getMessage());
-        }
+        loadCsv("Branches", "/tmp/import/Branches.csv", ",");
+//
+//
+//
+//        try{
+//            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+//
+//        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Branches.csv"))) {
+//                copyManager.copyIn("COPY Branches FROM STDIN WITH CSV HEADER DELIMITER ','", br);
+//                System.out.println("Data has been copied from CSV to the table successfully.");
+//            } catch (Exception e) {
+//                System.out.println("Error reading CSV file: " + e.getMessage());
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Connection failure: " + e.getMessage());
+//        }
     }
 
 
@@ -124,20 +126,23 @@ public class PostgreSql {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        loadCsv("Categories_ENG", "/tmp/import/Categories_ENG.csv", ";");
 
-        try{
-            CopyManager copyManager = new CopyManager((BaseConnection) conn);
 
-            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Categories_ENG.csv"))) {
-                copyManager.copyIn("COPY Categories_ENG FROM STDIN WITH CSV HEADER DELIMITER ';'", br);
-                System.out.println("Data has been copied from CSV to the table successfully.");
-            } catch (Exception e) {
-                System.out.println("Error reading CSV file: Categories_ENG" + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection failure: Categories_ENG " + e.getMessage());
-        }
-
+        //
+//        try{
+//            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+//
+//            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Categories_ENG.csv"))) {
+//                copyManager.copyIn("COPY Categories_ENG FROM STDIN WITH CSV HEADER DELIMITER ';'", br);
+//                System.out.println("Data has been copied from CSV to the table successfully.");
+//            } catch (Exception e) {
+//                System.out.println("Error reading CSV file: Categories_ENG" + e.getMessage());
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Connection failure: Categories_ENG " + e.getMessage());
+//        }
+//
 
     }
 
@@ -164,19 +169,22 @@ public class PostgreSql {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        loadCsv("Customers_ENG", "/tmp/import/Customers_ENG.csv", ";");
 
-        try{
-            CopyManager copyManager = new CopyManager((BaseConnection) conn);
 
-            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Customers_ENG.csv"))) {
-                copyManager.copyIn("COPY Customers_ENG FROM STDIN WITH CSV HEADER DELIMITER ';'", br);
-                System.out.println("Data has been copied from CSV to the table successfully.");
-            } catch (Exception e) {
-                System.out.println("Error reading CSV file: " + e.getMessage());
-            }
-        } catch (SQLException e) {
-            System.out.println("Connection failure: " + e.getMessage());
-        }
+//
+//        try{
+//            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+//
+//            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Customers_ENG.csv"))) {
+//                copyManager.copyIn("COPY Customers_ENG FROM STDIN WITH CSV HEADER DELIMITER ';'", br);
+//                System.out.println("Data has been copied from CSV to the table successfully.");
+//            } catch (Exception e) {
+//                System.out.println("Error reading CSV file: " + e.getMessage());
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Connection failure: " + e.getMessage());
+//        }
 
     }
 
@@ -204,17 +212,21 @@ public class PostgreSql {
             throw new RuntimeException(e);
         }
 
-        try{
-            CopyManager copyManager = new CopyManager((BaseConnection) conn);
-        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Orders.csv"))) {
-            copyManager.copyIn("COPY Orders FROM STDIN WITH CSV HEADER DELIMITER ','", br);
-            System.out.println("Data has been copied from CSV to the table successfully.");
-        } catch (Exception e) {
-            System.out.println("Error reading CSV file: " + e.getMessage());
-        }
-    } catch (SQLException e) {
-        System.out.println("Connection failure: " + e.getMessage());
-    }
+        loadCsv("Orders", "/tmp/import/Orders_final.csv", ",");
+
+
+//
+//        try{
+//            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+//        try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Orders.csv"))) {
+//            copyManager.copyIn("COPY Orders FROM STDIN WITH CSV HEADER DELIMITER ','", br);
+//            System.out.println("Data has been copied from CSV to the table successfully.");
+//        } catch (Exception e) {
+//            System.out.println("Error reading CSV file: " + e.getMessage());
+//        }
+//    } catch (SQLException e) {
+//        System.out.println("Connection failure: " + e.getMessage());
+//    }
 
     }
 
@@ -238,33 +250,56 @@ public class PostgreSql {
             throw new RuntimeException(e);
         }
 
-        try{
-            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+        loadCsv("Order_Details", "/tmp/import/Order_Details_final.csv", ",");
 
-            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Order_Details.csv"))) {
-                copyManager.copyIn("COPY Order_Details FROM STDIN WITH CSV HEADER DELIMITER ','", br);
-                System.out.println("Data has been copied from CSV to the table successfully.");
-            } catch (Exception e) {
-                System.out.println("Error reading CSV file: " + e.getMessage());
-            }
+
+//
+//        try{
+//            CopyManager copyManager = new CopyManager((BaseConnection) conn);
+//
+//            try (BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Jarek\\Documents\\projekty\\sqlAndNoSql_speedTest\\data\\Order_Details.csv"))) {
+//                copyManager.copyIn("COPY Order_Details FROM STDIN WITH CSV HEADER DELIMITER ','", br);
+//                System.out.println("Data has been copied from CSV to the table successfully.");
+//            } catch (Exception e) {
+//                System.out.println("Error reading CSV file: " + e.getMessage());
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Connection failure: " + e.getMessage());
+//        }
+    }
+
+
+    private static void loadCsv(String tableName, String filePath, String delimiter) {
+        String copyCommand = String.format(
+                "COPY %s FROM '%s' WITH (FORMAT csv, HEADER true, DELIMITER '%s')",
+                tableName, filePath, delimiter
+        );
+
+        try (Statement stmt = conn.createStatement()) {
+
+            stmt.execute(copyCommand);
+            System.out.println("PostgreSQL successfully loaded CSV from: " + filePath);
+
         } catch (SQLException e) {
-            System.out.println("Connection failure: " + e.getMessage());
+            System.out.println("COPY error: " + e.getMessage());
         }
     }
 
 
-    public static void dropTables(){
-        try {
-            Statement stmt = conn.createStatement();
-            stmt.executeUpdate("DROP TABLE IF EXISTS Order_Details");
-            stmt.executeUpdate("DROP TABLE IF EXISTS Orders");
-            stmt.executeUpdate("DROP TABLE IF EXISTS Branches");
-            stmt.executeUpdate("DROP TABLE IF EXISTS Categories_ENG");
-            stmt.executeUpdate("DROP TABLE IF EXISTS Customers_ENG");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
 
+
+
+    public static void dropTables() {
+        try (Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DROP TABLE IF EXISTS Order_Details CASCADE");
+            stmt.executeUpdate("DROP TABLE IF EXISTS Orders CASCADE");
+            stmt.executeUpdate("DROP TABLE IF EXISTS Branches CASCADE");
+            stmt.executeUpdate("DROP TABLE IF EXISTS Categories_ENG CASCADE");
+            stmt.executeUpdate("DROP TABLE IF EXISTS Customers_ENG CASCADE");
+            System.out.println("All tables dropped successfully.");
+        } catch (SQLException e) {
+            throw new RuntimeException("Error dropping tables: " + e.getMessage(), e);
+        }
     }
 
 
