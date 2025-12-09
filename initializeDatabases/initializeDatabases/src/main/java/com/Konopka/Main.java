@@ -1,8 +1,6 @@
 package com.Konopka;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Scanner;
 import java.util.Set;
@@ -32,12 +30,10 @@ public class Main {
                     PostgreSql.getInstance(1);
                     break;
                 case 3:
-                    PostgreSql.getInstance(2);
-                    Cassandra.getInstance();
+                    CassandraNew.getInstance();
                     break;
                 case 4:
-                    PostgreSql.getInstance(2);
-                    Cassandra_old.getInstance();
+                    CassandraOld.getInstance();
                     break;
                 case 5:
                     MySql.getInstance();

@@ -276,10 +276,8 @@ public class PostgreSql {
         );
 
         try (Statement stmt = conn.createStatement()) {
-
             stmt.execute(copyCommand);
             System.out.println("PostgreSQL successfully loaded CSV from: " + filePath);
-
         } catch (SQLException e) {
             System.out.println("COPY error: " + e.getMessage());
         }

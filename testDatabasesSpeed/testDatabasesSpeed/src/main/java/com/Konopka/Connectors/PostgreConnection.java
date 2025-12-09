@@ -12,16 +12,16 @@ public class PostgreConnection {
     private static PostgreConnection instance;
     private static Connection conn;
 
-    public static Connection getConn() {
+    public static Connection getConnection() {
         return conn;
     }
 
 
     private PostgreConnection() {
-            getConnection();
+        PostgreConnection();
     }
 
-    private static void getConnection() {
+    private static void PostgreConnection() {
         if (conn == null) {
             try {
                 conn = DriverManager.getConnection(URL, USER, PASSWORD);
@@ -33,13 +33,7 @@ public class PostgreConnection {
     }
 
 
-    public static PostgreConnection getInstance() {
-        if (instance == null) {
-            instance = new PostgreConnection();
-            System.out.println("instancja wywolana");
-        }
-        return instance;
-    }
+
 
 
 

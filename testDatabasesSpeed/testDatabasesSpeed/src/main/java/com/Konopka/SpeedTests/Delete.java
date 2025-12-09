@@ -1,17 +1,22 @@
 package com.Konopka.SpeedTests;
 
-import com.datastax.driver.core.Session;
+
+import com.datastax.oss.driver.api.core.session.Session;
 
 import java.sql.Connection;
 
 public class Delete {
 
-    private static Connection conn;
-    private static Session session;
+    private static Connection connMySql;
+    private static Connection connPostgres;
+    private static Session sessionCassOld;
+    private static Session sessionCassNew;
 
-    public Delete(Session session, Connection conn){
-        Delete.session = session;
-        Delete.conn = conn;
+    public Delete(com.datastax.oss.driver.api.core.session.Session sessionCassOld, com.datastax.oss.driver.api.core.session.Session sessionCassNew, Connection connPostgres, Connection connMySql){
+        Delete.connMySql =  connMySql;
+        Delete.connPostgres =  connPostgres;
+        Delete.sessionCassOld =  sessionCassOld;
+        Delete.sessionCassNew =  sessionCassNew;
     }
 
 
