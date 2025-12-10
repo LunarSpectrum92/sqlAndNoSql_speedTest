@@ -3,9 +3,6 @@ package com.Konopka.CassandraNew;
 import com.Konopka.Interfaces.UpdateInterface;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class UpdateCassandra implements UpdateInterface {

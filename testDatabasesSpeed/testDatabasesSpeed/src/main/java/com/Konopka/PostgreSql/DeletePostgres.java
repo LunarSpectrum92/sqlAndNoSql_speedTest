@@ -6,7 +6,6 @@ import com.datastax.oss.driver.api.core.cql.Row;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.Objects;
 import java.util.UUID;
 
 public class DeletePostgres implements DeleteInterface {

@@ -1,8 +1,6 @@
 package com.Konopka.PostgreSql;
 
-import com.Konopka.Connectors.PostgreConnection;
 import com.Konopka.Interfaces.ConnectInterface;
-import com.datastax.oss.driver.api.core.CqlSession;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
