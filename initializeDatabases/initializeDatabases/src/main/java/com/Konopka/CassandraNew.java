@@ -219,34 +219,7 @@ public class CassandraNew {
     }
 
 
-//    public static void createProductsByCategory() {
-//        session.execute("""
-//                    CREATE TABLE IF NOT EXISTS cassandraSpeedTestDb.products_by_category (
-//                       CATEGORY1 text,
-//                       CATEGORY2 text,
-//                       CATEGORY3 text,
-//                       CATEGORY4 text,
-//                       ITEMID int,
-//                       BRAND text,
-//                       ITEMCODE text,
-//                       ITEMNAME text,
-//                       PRIMARY KEY ((CATEGORY1, CATEGORY2, CATEGORY3), ITEMID)
-//                    );
-//                """);
-//    }
-//
-//    public static void insertProductsByCategory() {
-//        try{
-//            session.execute("""
-//                    COPY cassandraSpeedTestDb.order_details_by_order (CATEGORY1, CATEGORY2, CATEGORY3, CATEGORY4, ITEMID, BRAND, ITEMCODE, ITEMNAME )
-//                    FROM '/var/lib/cassandra-files/Categories_ENG.csv'
-//                    WITH DELIMITER=';' AND HEADER=TRUE;
-//                    """);
-//        }catch(Exception e){
-//            System.err.println("Nie znaleziono Cassandra!");
-//            e.printStackTrace();
-//        }
-//    }
+
 
     private static void createOrderDetailsByOrder() {
         session.execute("""

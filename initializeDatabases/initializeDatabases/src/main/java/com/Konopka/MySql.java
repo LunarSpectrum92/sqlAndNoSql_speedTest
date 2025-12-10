@@ -1,7 +1,5 @@
 package com.Konopka;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.*;
 
 public class MySql {
@@ -197,55 +195,6 @@ public class MySql {
             System.out.println("Błąd podczas wczytywania CSV do tabeli " + tableName + ": " + e.getMessage());
         }
     }
-
-
-//
-//    private static void loadCsv(Connection conn, String tableName, String filePath, String delimiter, boolean enclose) {
-//        filePath = filePath.replace("\\", "\\\\");
-//        String enclosedPart = enclose ? " ENCLOSED BY '\"'" : "";
-//
-//        String loadDataSql = String.format(
-//                "LOAD DATA INFILE '%s' INTO TABLE %s " +
-//                        "FIELDS TERMINATED BY '%s'%s " +
-//                        "IGNORE 1 LINES",
-//                filePath, tableName, delimiter, enclosedPart
-//        );
-//
-//        boolean initialAutoCommit = true;
-//
-//        try (Statement stmt = conn.createStatement()) {
-//            initialAutoCommit = conn.getAutoCommit();
-//            conn.setAutoCommit(false);
-//            stmt.execute("ALTER TABLE " + tableName + " DISABLE KEYS");
-//            System.out.println("Rozpoczynanie ładowania danych do tabeli " + tableName + "...");
-//            stmt.execute(loadDataSql);
-//            System.out.println("Zakończono ładowanie. Budowanie i włączanie indeksów (ENABLE KEYS)...");
-//            stmt.execute("ALTER TABLE " + tableName + " ENABLE KEYS");
-//            conn.commit();
-//
-//            System.out.println("Sukces: Załadowano dane do tabeli " + tableName);
-//
-//        } catch (SQLException e) {
-//            System.err.println("Błąd podczas wczytywania CSV do tabeli " + tableName + ": " + e.getMessage());
-//            try {
-//                if (conn != null && !conn.getAutoCommit()) {
-//                    conn.rollback();
-//                    System.err.println("Transakcja została wycofana (ROLLBACK).");
-//                }
-//            } catch (SQLException rollbackEx) {
-//                System.err.println("Błąd podczas wycofywania transakcji: " + rollbackEx.getMessage());
-//            }
-//        } finally {
-//            try {
-//                if (conn != null) {
-//                    conn.setAutoCommit(initialAutoCommit);
-//                }
-//            } catch (SQLException finalEx) {
-//                System.err.println("Błąd podczas przywracania Autocommit: " + finalEx.getMessage());
-//            }
-//        }
-//    }
-
 
 
     public static void dropTables() {

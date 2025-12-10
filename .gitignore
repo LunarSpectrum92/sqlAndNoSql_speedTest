@@ -1,2 +1,3 @@
 data/
 import/
+initializeDatabases/initializeDatabases/src/main/resources/config.properties/
